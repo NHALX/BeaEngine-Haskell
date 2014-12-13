@@ -1,0 +1,103 @@
+name:                BeaEngine
+version:             4.1.0.0
+synopsis:            binding: BeaEngine disassembler
+description:         
+  - Direct binding to the C API. 
+  - Symbol names mostly unchanged; prefixed to enforce haskell naming rules.
+  - BeaEngine library source (LGPL-3) included and statically linked.
+  - Package version numbering uses convention: C.C.H.H - where C is the underlying version of the C library, and H is the local Haskell binding revision.
+
+homepage:            http://www.beaengine.org/
+license:             LGPL-3
+license-file:        LICENSE
+author:              Neal Alexander
+maintainer:          nhalxr@gmail.com
+-- copyright:           
+category:            Disassembler
+build-type:          Simple
+-- extra-source-files:  
+cabal-version:       >=1.10
+
+
+extra-source-files: 
+  include/bindings.dsl.custom.h
+  include/beaengine/basic_types.h
+  include/beaengine/BeaEngine.h
+  include/beaengine/export.h
+  include/beaengine/macros.h
+  csrc/BeaEngine.c
+  csrc/CMakeLists.txt
+  csrc/COPYING.LESSER.txt
+  csrc/COPYING.txt
+  csrc/README.txt
+  csrc/Includes/BeaEngineVersion.c
+  csrc/Includes/internal_datas.h
+  csrc/Includes/protos.h
+  csrc/Includes/Routines_Disasm.c
+  csrc/Includes/Routines_ModRM.c
+  csrc/Includes/instr_set/Data_opcode.h
+  csrc/Includes/instr_set/opcodes_AES.c
+  csrc/Includes/instr_set/opcodes_A_M.c
+  csrc/Includes/instr_set/opcodes_CLMUL.c
+  csrc/Includes/instr_set/opcodes_FPU.c
+  csrc/Includes/instr_set/opcodes_Grp1.c
+  csrc/Includes/instr_set/opcodes_Grp12.c
+  csrc/Includes/instr_set/opcodes_Grp13.c
+  csrc/Includes/instr_set/opcodes_Grp14.c
+  csrc/Includes/instr_set/opcodes_Grp15.c
+  csrc/Includes/instr_set/opcodes_Grp16.c
+  csrc/Includes/instr_set/opcodes_Grp2.c
+  csrc/Includes/instr_set/opcodes_Grp3.c
+  csrc/Includes/instr_set/opcodes_Grp4.c
+  csrc/Includes/instr_set/opcodes_Grp5.c
+  csrc/Includes/instr_set/opcodes_Grp6.c
+  csrc/Includes/instr_set/opcodes_Grp7.c
+  csrc/Includes/instr_set/opcodes_Grp8.c
+  csrc/Includes/instr_set/opcodes_Grp9.c
+  csrc/Includes/instr_set/opcodes_MMX.c
+  csrc/Includes/instr_set/opcodes_N_Z.c
+  csrc/Includes/instr_set/opcodes_prefixes.c
+  csrc/Includes/instr_set/opcodes_SSE.c
+
+library
+  exposed-modules:    
+        BeaEngine,
+        BeaEngine.REX, 
+        BeaEngine.PrefixInfo, 
+        BeaEngine.MemoryType, 
+        BeaEngine.InstrType, 
+        BeaEngine.EFL, 
+        BeaEngine.Disasm,
+        BeaEngine.Constants,
+        BeaEngine.ArgType
+
+  c-sources: 
+        csrc/BeaEngine.c 
+
+  include-dirs: include/BeaEngine/
+  include-dirs: include/
+  hs-source-dirs: .
+  hs-source-dirs: BeaEngine
+  hs-source-dirs: test
+
+  CC-Options: "-DBEA_ENGINE_STATIC"
+
+  build-depends:       base >=4.7 && <4.8, bytestring >= 0.10.4.0     
+  build-tools:         hsc2hs
+  default-language:    Haskell2010
+
+Test-Suite test-marshal
+  type:                exitcode-stdio-1.0
+  main-is:             Test_Marshal.hs
+  build-depends:       base >= 4.7, BeaEngine == 4.1.0.0
+  default-language:    Haskell2010
+  hs-source-dirs:      test
+  c-sources:           test/Test_Marshal.c 
+
+Test-Suite test-disasm
+  type:                exitcode-stdio-1.0
+  main-is:             Test_Disasm.hs
+  build-depends:       base >= 4.7, bytestring >= 0.10.4.0, BeaEngine == 4.1.0.0
+  default-language:    Haskell2010
+  hs-source-dirs:      test
+  
