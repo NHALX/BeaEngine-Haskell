@@ -8,6 +8,7 @@ import Data.Word
 import Data.Int
 import Data.List
 import BeaEngine.MemoryType
+import BeaEngine.Util
 #strict_import
 
 
@@ -31,4 +32,4 @@ import BeaEngine.MemoryType
 #field SegmentReg , Word32
 #stoptype
 
-cArgMnemonicS = map castCCharToChar . takeWhile (/=0) . cArgMnemonic
+cArgMnemonicS = fromCSTR . cArgMnemonic

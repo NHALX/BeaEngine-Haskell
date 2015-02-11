@@ -6,6 +6,7 @@ description:
   - Symbol names mostly unchanged; prefixed to enforce haskell naming rules.
   - BeaEngine library source (LGPL-3) included and statically linked.
   - Package version numbering uses convention: C.C.H.H - where C is the underlying version of the C library, and H is the local Haskell binding revision.
+  - Functions: dasm (high level wrapper; lazy interleavedIO stream), disasm (mid level; IO monad), cDisasm (C API)
 
 homepage:            http://www.beaengine.org/
 license:             LGPL-3

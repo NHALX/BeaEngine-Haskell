@@ -14,6 +14,7 @@ import BeaEngine.MemoryType
 import BeaEngine.InstrType
 import BeaEngine.ArgType
 import BeaEngine.Constants
+import BeaEngine.Util
 #strict_import
 
 
@@ -56,7 +57,7 @@ import BeaEngine.Constants
 #ccall BeaEngineVersion , IO CString
 #ccall BeaEngineRevision , IO CString
 
-cCompleteInstrS = map castCCharToChar . takeWhile (/=0) . cCompleteInstr
+cCompleteInstrS = fromCSTR . cCompleteInstr
 
 beaEngineVersion = peekCString =<< cBeaEngineVersion
 

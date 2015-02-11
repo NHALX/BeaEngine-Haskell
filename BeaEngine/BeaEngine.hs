@@ -1,20 +1,22 @@
 module BeaEngine 
-    (MachineCode(..),dasm,
+    (MachineCode(..),dasm,mc_id,
      module BeaEngine.Disasm,
      module BeaEngine.REX,
      module BeaEngine.PrefixInfo,
      module BeaEngine.MemoryType,
      module BeaEngine.InstrType,
      module BeaEngine.ArgType,
-     module BeaEngine.Constants
+     module BeaEngine.Constants,
+     module BeaEngine.EFL
     )
 where
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign
 import BeaEngine.Disasm
-import BeaEngine.REX
+import BeaEngine.REX 
 import BeaEngine.PrefixInfo hiding (palignment,calignment)
+import BeaEngine.EFL        hiding (palignment,calignment)
 import BeaEngine.MemoryType
 import BeaEngine.InstrType
 import BeaEngine.ArgType
@@ -24,28 +26,28 @@ import qualified Data.ByteString.Internal as B
 import System.IO.Unsafe
 import Debug.Trace
 
-data MachineCode = X86_16 { mcd :: B.ByteString }
-                 | X86_32 { mcd :: B.ByteString }
-                 | X86_64 { mcd :: B.ByteString }
+data MachineCode = X86_16 { mc_data :: B.ByteString }
+                 | X86_32 { mc_data :: B.ByteString }
+                 | X86_64 { mc_data :: B.ByteString }
 
-
-mcid X86_32{} = 0
-mcid X86_16{} = 16
-mcid X86_64{} = 64
+mc_id :: MachineCode -> Word32
+mc_id X86_32{} = 0
+mc_id X86_16{} = 16
+mc_id X86_64{} = 64
 
 
 
 dasm a b = unsafePerformIO (dasmIO a b)
 
-dasmIO :: Word32 -> MachineCode -> IO [C_Disasm]
+dasmIO :: Word64 -> MachineCode -> IO [C_Disasm]
 dasmIO options code' = do --allocaBytes (length code) $ \c -> 
-  let (b,bi,bn) = B.toForeignPtr (mcd code')
+  let (b,bi,bn) = B.toForeignPtr (mc_data code')
   withForeignPtr b $ \c -> do
            alloca $ \d -> do           
-             poke (pArchi d) (fromIntegral $ mcid code')
-             poke (pOptions d) 0
+             poke (pArchi d) (mc_id code')
+             poke (pOptions d) options
 
-             f bn d (fromIntegral $ ptrToIntPtr c) (fromIntegral bi)
+             f bn d (fromIntegral $ ptrToIntPtr (c `plusPtr` bi)) 0
 
     where
 
